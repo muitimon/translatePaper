@@ -62,16 +62,10 @@ def sortForPaper(boxes_obj, page_obj):
 
     return boxes_left
 
-def print_and_write(txt):
-    print(txt)
-    output_txt.write(txt)
-    output_txt.write('\n')
-
 with open(sys.argv[1], 'rb') as f:
     # PDFPage.get_pages()にファイルオブジェクトを指定して、PDFPageオブジェクトを順に取得する。
     # 時間がかかるファイルは、キーワード引数pagenosで処理するページ番号（0始まり）のリストを指定するとよい。
     for page in PDFPage.get_pages(f):
-        print_and_write('\n====== ページ区切り ======\n')
         interpreter.process_page(page)  # ページを処理する。
         layout = device.get_result()  # LTPageオブジェクトを取得。
 
@@ -82,7 +76,4 @@ with open(sys.argv[1], 'rb') as f:
         boxes_paper = sortForPaper(boxes, page)
 
         for box in boxes_paper:
-            print_and_write('-' * 10)  # 読みやすいよう区切り線を表示する。
-            print_and_write(box.get_text().strip())  # テキストボックス内のテキストを表示する。
-
-output_txt.close()
+            print(box.get_text().strip())  # テキストボックス内のテキストを表示する。
