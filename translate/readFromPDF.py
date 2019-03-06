@@ -41,6 +41,27 @@ interpreter = PDFPageInterpreter(resource_manager, device)
 # 出力用のテキストファイル
 output_txt = open('output.txt', 'w')
 
+def sortForPaper(boxes_obj, page_obj):
+    """
+    ページの左右にリストを分けてsortを行う
+    """
+    boxes_right = []
+    boxes_left = []
+
+    # ページの右半分，左半分の要素に分ける
+    for box_obj in boxes_obj:
+        if box_obj.x0 > page_obj.mediabox[2]/2:
+            boxes_right.append(box_obj)
+        else:
+            boxes_left.append(box_obj)
+
+    # 高さ順に並べ替え
+    boxes_right.sort(key=lambda b: -b.y1)
+    boxes_left.sort(key=lambda b: -b.y1)
+    boxes_left.extend(boxes_right)
+
+    return boxes_left
+
 def print_and_write(txt):
     print(txt)
     output_txt.write(txt)
@@ -57,11 +78,10 @@ with open(sys.argv[1], 'rb') as f:
         # ページ内のテキストボックスのリストを取得する。
         boxes = find_textboxes_recursively(layout)
 
-        # テキストボックスの左上の座標の順でテキストボックスをソートする。
-        # y1（Y座標の値）は上に行くほど大きくなるので、正負を反転させている。
-        boxes.sort(key=lambda b: (-b.y1, b.x0))
+        # ページを記述順にならべかえる
+        boxes_paper = sortForPaper(boxes, page)
 
-        for box in boxes:
+        for box in boxes_paper:
             print_and_write('-' * 10)  # 読みやすいよう区切り線を表示する。
             print_and_write(box.get_text().strip())  # テキストボックス内のテキストを表示する。
 
