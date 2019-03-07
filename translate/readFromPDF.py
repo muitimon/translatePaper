@@ -7,6 +7,8 @@ from pdfminer.layout import LAParams, LTContainer, LTTextBox
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 
+import urllib.request
+import json
 
 def find_textboxes_recursively(layout_obj):
     """
@@ -62,7 +64,17 @@ def sortForPaper(boxes_obj, page_obj):
 
     return boxes_left
 
+def print_and_write(txt):
+    print(txt)
+    output_txt.write(txt)
+    output_txt.write('\n')
+
+
 with open(sys.argv[1], 'rb') as f:
+    url_items = 'https://script.google.com/macros/s/AKfycbwZIfe9kDGw_0wsQOiesJAl-qxEMP9dukf1Pbv2Bcid/exec'
+    source = 'en'
+    target = 'ja'
+    headers = {"content-type": "application/json"}
     # PDFPage.get_pages()にファイルオブジェクトを指定して、PDFPageオブジェクトを順に取得する。
     # 時間がかかるファイルは、キーワード引数pagenosで処理するページ番号（0始まり）のリストを指定するとよい。
     for page in PDFPage.get_pages(f):
@@ -76,4 +88,7 @@ with open(sys.argv[1], 'rb') as f:
         boxes_paper = sortForPaper(boxes, page)
 
         for box in boxes_paper:
-            print(box.get_text().strip())  # テキストボックス内のテキストを表示する。
+            print(url_items + '?text=' + box.get_text().strip() + '&source=' + source + '&target=' + target)
+            r_get =  urllib.request.urlopen(url_items + '?text=' + box.get_text().strip() + '&source=' + source + '&target=' + target)
+            content = json.loads(response.read().decode('utf8'))
+            print(content)  # テキストボックス内のテキストを表示する。
