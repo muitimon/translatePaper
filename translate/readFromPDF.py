@@ -88,16 +88,9 @@ with open(sys.argv[1], 'rb') as f:
         boxes_paper = sortForPaper(boxes, page)
 
         for box in boxes_paper:
-            print(endpoint, box.get_text().strip())
-            #r_get =  urllib.request.urlopen(url_items + '?text=' + '"' + box.get_text().strip().replace('i','') + '"' + '&source=' + source + '&target=' + target)
-            # curl -X POST -H "Content-Type: application/json" -d '{"text": "Towards Quality Gates in", "source":"en", "target":"ja"}' https://script.google.com/macros/s/AKfycbwALoUQDlVmsQaKmSLpE5drtPmmxui9j3gsMjYxVpvtZrmMfbtn/exec
-            json_data = json.dumps({'text': box.get_text().strip(), 'source':'en', 'target':'ja'})
+            text = box.get_text().strip().replace('\n', ' ')
+            json_data = json.dumps({'text': text, 'source':'en', 'target':'ja'})
             requests.post(endpoint, json_data, headers=headers)
             r_get = requests.get(endpoint).json()
             content = r_get["translatedText"]
             print(content)
-            break
-            #content = json.loads(response.read().decode('utf8'))
-            #print(content)  # テキストボックス内のテキストを表示する。
-
-        break
