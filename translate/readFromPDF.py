@@ -7,7 +7,7 @@ from pdfminer.layout import LAParams, LTContainer, LTTextBox
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 
-import urllib.request
+import requests
 import json
 
 def find_textboxes_recursively(layout_obj):
@@ -71,7 +71,7 @@ def print_and_write(txt):
 
 
 with open(sys.argv[1], 'rb') as f:
-    url_items = 'https://script.google.com/macros/s/AKfycbwZIfe9kDGw_0wsQOiesJAl-qxEMP9dukf1Pbv2Bcid/exec'
+    endpoint = 'https://script.google.com/macros/s/AKfycbwALoUQDlVmsQaKmSLpE5drtPmmxui9j3gsMjYxVpvtZrmMfbtn/exec'
     source = 'en'
     target = 'ja'
     headers = {"content-type": "application/json"}
@@ -88,7 +88,16 @@ with open(sys.argv[1], 'rb') as f:
         boxes_paper = sortForPaper(boxes, page)
 
         for box in boxes_paper:
-            print(url_items + '?text=' + box.get_text().strip() + '&source=' + source + '&target=' + target)
-            r_get =  urllib.request.urlopen(url_items + '?text=' + box.get_text().strip() + '&source=' + source + '&target=' + target)
-            content = json.loads(response.read().decode('utf8'))
-            print(content)  # テキストボックス内のテキストを表示する。
+            print(endpoint, box.get_text().strip())
+            #r_get =  urllib.request.urlopen(url_items + '?text=' + '"' + box.get_text().strip().replace('i','') + '"' + '&source=' + source + '&target=' + target)
+            # curl -X POST -H "Content-Type: application/json" -d '{"text": "Towards Quality Gates in", "source":"en", "target":"ja"}' https://script.google.com/macros/s/AKfycbwALoUQDlVmsQaKmSLpE5drtPmmxui9j3gsMjYxVpvtZrmMfbtn/exec
+            json_data = json.dumps({'text': box.get_text().strip(), 'source':'en', 'target':'ja'})
+            requests.post(endpoint, json_data, headers=headers)
+            r_get = requests.get(endpoint).json()
+            content = r_get["translatedText"]
+            print(content)
+            break
+            #content = json.loads(response.read().decode('utf8'))
+            #print(content)  # テキストボックス内のテキストを表示する。
+
+        break
