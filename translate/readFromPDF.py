@@ -71,7 +71,7 @@ def print_and_write(txt):
 
 
 with open(sys.argv[1], 'rb') as f:
-    endpoint = 'https://script.google.com/macros/s/AKfycbwALoUQDlVmsQaKmSLpE5drtPmmxui9j3gsMjYxVpvtZrmMfbtn/exec'
+    endpoint = sys.argv[2]
     source = 'en'
     target = 'ja'
     headers = {"content-type": "application/json"}
