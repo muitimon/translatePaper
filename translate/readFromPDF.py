@@ -88,7 +88,8 @@ with open(sys.argv[1], 'rb') as f:
         boxes_paper = sortForPaper(boxes, page)
 
         for box in boxes_paper:
-            text = box.get_text().strip().replace('\n', ' ')
+            text = box.get_text().strip().replace('-\n', '')
+            text = text.replace('\n', ' ')
             json_data = json.dumps({'text': text, 'source':'en', 'target':'ja'})
             requests.post(endpoint, json_data, headers=headers)
             r_get = requests.get(endpoint).json()
