@@ -1,0 +1,7 @@
+version: '3'
+services:
+  workspace:
+    build: .
+    volumes:
+      - .:/usr/src
+    tty: true
