@@ -1,11 +1,10 @@
 function doPost(e) {
   var p = JSON.parse(e.postData.getDataAsString());
-  //p = JSON.parse('{"text":"Hello","source":"en","target":"ja"}'); 
   var translatedText = LanguageApp.translate(p.text, p.source, p.target);
   writeToSheet(translatedText);
 }
 
-var spreadsheet = SpreadsheetApp.openById('1HbjectpAQ_5oaAA46CqtugWqCTm7XESz_dIUstY7Qwo');
+var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 var sheet = spreadsheet.getSheets()[0]
 var lastRow = sheet.getLastRow();
 var lastColumn = sheet.getLastColumn();
